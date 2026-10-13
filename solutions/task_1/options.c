@@ -13,6 +13,7 @@
 #include <stdlib.h>         /* malloc, realloc, free, strtol, exit         */
 #include <string.h>         /* strchr                                      */
 #include <errno.h>          /* errno, ERANGE                               */
+#include <limits.h>         /* PATH_MAX                                    */
 #include <unistd.h>         /* getopt, optarg, optopt, getpid, getuid, ... */
 #include <ulimit.h>         /* ulimit(2), UL_GETFSIZE, UL_SETFSIZE         */
 #include <sys/types.h>      /* uid_t, gid_t, pid_t                         */
@@ -201,7 +202,7 @@ static void set_core_size(const char *arg)
 /* -d : текущая рабочая директория. */
 static void print_cwd(void)
 {
-    char *cwd = getcwd(NULL, 0);    /* SVR4/illumos: при buf == NULL память выделяется сам */
+    char *cwd = getcwd(NULL, PATH_MAX); /* illumos: при buf == NULL выделяет size байт; size 0 даёт EINVAL */
 
     if (cwd == NULL) {
         perror("-d: getcwd");
