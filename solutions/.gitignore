@@ -1,0 +1,10 @@
+# Артефакты сборки — в репозиторий не коммитятся
+*.o
+core
+options
+ex_time
+setuid_test
+strlist
+line_lookup
+line_lookup_alarm
+line_lookup_mmap
