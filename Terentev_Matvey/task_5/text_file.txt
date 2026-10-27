@@ -1,0 +1,5 @@
+A short text file to test the program
+second line of the file
+the third line
+bla bla bla 4th line
+the last fifth line

@@ -1,0 +1,27 @@
+Protected info
+If not opened by the owner:
+--- Before setuid ---
+Real UID      = 5462
+Effective UID = 5462
+Real GID      = 5482
+Effective GID = 5482
+fopen: Permission denied
+--- After setuid ---
+Real UID      = 5462
+Effective UID = 5462
+Real GID      = 5482
+Effective GID = 5482
+fopen: Permission denied
+If opened by the group member:
+--- Before setuid ---
+Real UID      = 5462
+Effective UID = 5460
+Real GID      = 5482
+Effective GID = 5482
+fopen("protected_file") succeeded
+--- After setuid ---
+Real UID      = 5462
+Effective UID = 5462
+Real GID      = 5482
+Effective GID = 5482
+fopen: Permission denied
