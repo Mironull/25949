@@ -1,16 +1,16 @@
 /*
- * Задания 2 и 3, объединённые в одну программу.
+ * Tasks 2 and 3 combined into one program.
  *
- * Программа выводит текущее время в Калифорнии (задание 2), а затем печатает
- * реальный и эффективный UID процесса до и после сброса привилегий вызовом
- * setuid(getuid()) (задание 3).
+ * The program prints the current time in California (task 2), then prints
+ * the real and effective UID of the process before and after dropping
+ * privileges with setuid(getuid()) (task 3).
  *
- * Часовой пояс задаётся через TZ=America/Los_Angeles, поэтому переход между
- * PST и PDT учитывается автоматически.
+ * The time zone is set via TZ=America/Los_Angeles, so the switch between
+ * PST and PDT is handled automatically.
  *
- * Если на исполняемом файле стоит бит setuid, а запускает его другой
- * пользователь, то до сброса эффективный UID равен UID владельца файла,
- * а после сброса становится равным реальному UID запустившего.
+ * If the executable has the setuid bit and another user runs it, the
+ * effective UID equals the file owner's UID before the drop and becomes
+ * the real UID of the caller after the drop.
  */
 
 #include <stdio.h>
@@ -37,14 +37,14 @@ static void print_california_time(void)
         exit(EXIT_FAILURE);
     }
 
-    printf("Время в Калифорнии: %02d/%02d/%04d %02d:%02d %s\n",
+    printf("California time: %02d/%02d/%04d %02d:%02d %s\n",
            sp->tm_mon + 1, sp->tm_mday, sp->tm_year + 1900,
            sp->tm_hour, sp->tm_min, tzname[sp->tm_isdst > 0 ? 1 : 0]);
 }
 
 static void print_uids(const char *stage)
 {
-    printf("%s real uid = %ld, effective uid = %ld\n",
+    printf("%-24s real uid = %ld, effective uid = %ld\n",
            stage, (long)getuid(), (long)geteuid());
 }
 
@@ -52,13 +52,13 @@ int main(void)
 {
     print_california_time();
 
-    print_uids("До setuid(getuid()):   ");
+    print_uids("Before setuid(getuid()):");
 
     if (setuid(getuid()) == -1) {
         perror("setuid");
         exit(EXIT_FAILURE);
     }
 
-    print_uids("После setuid(getuid()):");
+    print_uids("After setuid(getuid()):");
     return 0;
 }

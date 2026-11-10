@@ -2,9 +2,9 @@ CC = gcc
 CFLAGS = -O2
 SRC = time_setuid.c
 
-# Два экземпляра одной программы с разными правами:
-#   time_plain  (755)  — обычный запуск, effective uid = uid запустившего;
-#   time_suid   (4755) — бит setuid, effective uid = uid владельца файла.
+# Two copies of the same program with different permissions:
+#   time_plain  (755)  - normal run, effective uid = uid of the caller;
+#   time_suid   (4755) - setuid bit, effective uid = uid of the file owner.
 PLAIN = time_plain
 SUID = time_suid
 
