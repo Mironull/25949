@@ -8,3 +8,5 @@ strlist
 line_lookup
 line_lookup_alarm
 line_lookup_mmap
+time_plain
+time_suid
