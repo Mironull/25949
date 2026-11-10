@@ -8,3 +8,8 @@ strlist
 line_lookup
 line_lookup_alarm
 line_lookup_mmap
+process_manager
+long_file.txt
+run_command
+crash_program
+exit_code
