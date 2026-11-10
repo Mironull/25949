@@ -1,15 +1,15 @@
 /*
- * Задание 9. Создание двух процессов.
+ * Task 9. Creating two processes.
  *
- * Программа создаёт подпроцесс, который исполняет cat(1) для длинного файла.
- * Родитель тем временем печатает свой текст через printf(3).
+ * The program creates a child process that runs cat(1) on a long file.
+ * Meanwhile the parent prints its own text with printf(3).
  *
- * По умолчанию родитель ждёт завершения ребёнка через waitpid(2), поэтому его
- * последняя строка выводится строго после всего вывода cat (вторая часть
- * задания). С ключом -n родитель не ждёт ребёнка, и его последняя строка
- * может оказаться где угодно посреди вывода cat (первая часть задания).
+ * By default the parent waits for the child with waitpid(2), so its last
+ * line is always printed after the whole output of cat (second part of the
+ * task). With the -n option the parent does not wait, and its last line may
+ * appear anywhere in the middle of the cat output (first part of the task).
  *
- * Запуск: ./process_manager [-n] файл
+ * Usage: ./process_manager [-n] file
  */
 
 #include <stdio.h>
@@ -18,6 +18,12 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+static void usage(const char *prog)
+{
+    fprintf(stderr, "Usage: %s [-n] file\n", prog);
+    exit(EXIT_FAILURE);
+}
+
 int main(int argc, char **argv)
 {
     int wait_child = 1;
@@ -25,23 +31,19 @@ int main(int argc, char **argv)
     pid_t pid;
 
     while ((opt = getopt(argc, argv, "n")) != -1) {
-        if (opt == 'n') {
+        if (opt == 'n')
             wait_child = 0;
-        } else {
-            fprintf(stderr, "Использование: %s [-n] файл\n", argv[0]);
-            return EXIT_FAILURE;
-        }
+        else
+            usage(argv[0]);
     }
-    if (optind >= argc) {
-        fprintf(stderr, "Использование: %s [-n] файл\n", argv[0]);
-        return EXIT_FAILURE;
-    }
+    if (optind >= argc)
+        usage(argv[0]);
 
-    printf("[PARENT] Программа запущена, мой PID: %ld\n", (long)getpid());
+    printf("[PARENT] Program started, my PID: %ld\n", (long)getpid());
 
     /*
-     * Буфер stdout сбрасывается до fork(). Иначе при выводе в файл или канал
-     * несброшенный текст скопируется в ребёнка и напечатается дважды.
+     * Flush stdout before fork(). Otherwise, when output goes to a file or
+     * a pipe, the unflushed buffer is copied into the child and printed twice.
      */
     fflush(stdout);
 
@@ -52,32 +54,32 @@ int main(int argc, char **argv)
     }
 
     if (pid == 0) {
-        printf("[CHILD] Я дочерний процесс, мой PID: %ld\n", (long)getpid());
+        printf("[CHILD] I am the child process, my PID: %ld\n", (long)getpid());
         fflush(stdout);
         execlp("cat", "cat", argv[optind], (char *)NULL);
-        /* Сюда управление попадает, только если exec не удался. */
+        /* We get here only if exec failed. */
         perror("execlp");
         _exit(127);
     }
 
-    printf("[PARENT] Я родитель, PID ребёнка: %ld\n", (long)pid);
-    printf("[PARENT] Печатаю текст, пока ребёнок работает...\n");
+    printf("[PARENT] I am the parent, child PID: %ld\n", (long)pid);
+    printf("[PARENT] Printing some text while the child is working...\n");
 
     if (wait_child) {
         int status;
 
-        printf("[PARENT] Жду завершения ребёнка...\n");
+        printf("[PARENT] Waiting for the child to finish...\n");
         fflush(stdout);
         if (waitpid(pid, &status, 0) == -1) {
             perror("waitpid");
             return EXIT_FAILURE;
         }
         if (WIFEXITED(status))
-            printf("[PARENT] Ребёнок завершился с кодом %d\n", WEXITSTATUS(status));
+            printf("[PARENT] Child exited with status %d\n", WEXITSTATUS(status));
         else if (WIFSIGNALED(status))
-            printf("[PARENT] Ребёнок убит сигналом %d\n", WTERMSIG(status));
+            printf("[PARENT] Child was killed by signal %d\n", WTERMSIG(status));
     }
 
-    printf("[PARENT] Это последняя строка, которую печатает родитель.\n");
+    printf("[PARENT] This is the last line printed by the parent.\n");
     return 0;
 }

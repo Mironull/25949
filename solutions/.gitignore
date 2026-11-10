@@ -1,4 +1,4 @@
-# Артефакты сборки — в репозиторий не коммитятся
+# Build artifacts, not committed
 *.o
 core
 options

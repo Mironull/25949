@@ -1,4 +1,4 @@
-/* Тестовая программа для задания 10: завершается с кодом из аргумента. */
+/* Test program for task 10: exits with the code given as an argument. */
 
 #include <stdlib.h>
 

@@ -10,16 +10,16 @@ all: $(TARGET) $(LONG_FILE)
 $(TARGET): $(SRC)
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
 
-# Длинный файл для cat: чем он больше, тем заметнее перемешивание вывода
-# родителя и ребёнка в режиме без ожидания.
+# Long file for cat: the bigger it is, the more visible the interleaving
+# of parent and child output in no-wait mode.
 $(LONG_FILE):
 	awk 'BEGIN { for (i = 1; i <= $(LINES); i++) print "Line number " i " of the long file" }' > $(LONG_FILE)
 
-# Первая часть задания: родитель не ждёт ребёнка.
+# First part of the task: the parent does not wait for the child.
 nowait: all
 	./$(TARGET) -n $(LONG_FILE)
 
-# Вторая часть задания: родитель ждёт ребёнка через waitpid.
+# Second part of the task: the parent waits for the child with waitpid.
 wait: all
 	./$(TARGET) $(LONG_FILE)
 

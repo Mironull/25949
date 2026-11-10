@@ -1,12 +1,12 @@
 /*
- * Задание 10. Код завершения команды.
+ * Task 10. Exit status of a command.
  *
- * Программа запускает команду из первого аргумента в виде порождённого
- * процесса и передаёт ей все остальные аргументы. Затем она ждёт завершения
- * процесса и печатает его код завершения, а если процесс убит сигналом,
- * то номер и описание сигнала.
+ * The program runs the command given as the first argument as a child
+ * process and passes all remaining arguments to it. Then it waits for the
+ * child and prints its exit status, or the signal number and description
+ * if the child was killed by a signal.
  *
- * Запуск: ./run_command команда [аргументы...]
+ * Usage: ./run_command command [args...]
  */
 
 #include <stdio.h>
@@ -22,11 +22,11 @@ int main(int argc, char **argv)
     int status;
 
     if (argc < 2) {
-        fprintf(stderr, "Использование: %s команда [аргументы...]\n", argv[0]);
+        fprintf(stderr, "Usage: %s command [args...]\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    printf("[PARENT] Запускаю команду: %s\n", argv[1]);
+    printf("[PARENT] Starting command: %s\n", argv[1]);
     fflush(stdout);
 
     pid = fork();
@@ -36,10 +36,10 @@ int main(int argc, char **argv)
     }
 
     if (pid == 0) {
-        /* argv[1] — имя команды, &argv[1] — её argv, который кончается NULL. */
+        /* argv[1] is the command name, &argv[1] is its NULL-terminated argv. */
         execvp(argv[1], &argv[1]);
         perror("execvp");
-        _exit(127);   /* 127 в Unix означает «команда не найдена». */
+        _exit(127);   /* 127 traditionally means "command not found". */
     }
 
     if (waitpid(pid, &status, 0) == -1) {
@@ -48,10 +48,10 @@ int main(int argc, char **argv)
     }
 
     if (WIFEXITED(status)) {
-        printf("[PARENT] Команда завершилась нормально с кодом %d\n",
+        printf("[PARENT] Command exited normally with code: %d\n",
                WEXITSTATUS(status));
     } else if (WIFSIGNALED(status)) {
-        printf("[PARENT] Команда убита сигналом %d (%s)\n",
+        printf("[PARENT] Command terminated by signal: %d (%s)\n",
                WTERMSIG(status), strsignal(WTERMSIG(status)));
     }
     return 0;
