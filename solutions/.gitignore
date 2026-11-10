@@ -10,7 +10,12 @@ line_lookup_alarm
 line_lookup_mmap
 time_plain
 time_suid
-process_manager
+process_nowait
+process_waitpid
+process_wait
+process_waitid
+process_wait_early
+process_zombie
 long_file.txt
 run_command
 crash_program
