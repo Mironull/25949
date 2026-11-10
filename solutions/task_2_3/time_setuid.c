@@ -1,9 +1,9 @@
 /*
  * Tasks 2 and 3 combined into one program.
  *
- * The program prints the current time in California (task 2), then prints
- * the real and effective UID of the process before and after dropping
- * privileges with setuid(getuid()) (task 3).
+ * The program prints the real and effective UID of the process, then the
+ * current time in California (task 2), then drops privileges with
+ * setuid(getuid()) and prints both UIDs again (task 3).
  *
  * The time zone is set via TZ=America/Los_Angeles, so the switch between
  * PST and PDT is handled automatically.
@@ -50,9 +50,9 @@ static void print_uids(const char *stage)
 
 int main(void)
 {
-    print_california_time();
-
     print_uids("Before setuid(getuid()):");
+
+    print_california_time();
 
     if (setuid(getuid()) == -1) {
         perror("setuid");
