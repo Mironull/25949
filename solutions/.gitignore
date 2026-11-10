@@ -10,3 +10,8 @@ line_lookup_alarm
 line_lookup_mmap
 time_plain
 time_suid
+process_manager
+long_file.txt
+run_command
+crash_program
+exit_code
